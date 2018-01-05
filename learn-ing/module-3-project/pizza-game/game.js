@@ -28,6 +28,49 @@ const Game = function(){
     }
 
     static handleNextPizza() {
+      document.getElementById('myModal').innerHTML = '';
+      document.getElementById('myModal').innerHTML = `<div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h1 class="modal-title text-center">What's on this pizza?</h1>
+          </div>
+          <div class="modal-body">
+            <p class="italicize text-center">Think a pizza looks delicious? Click the pizza icon to like it! Think it looks gross? Give it a thumbs down!</p>
+            <img id="rando-pizza-img" style="height:250px;max-width: 100%;">
+            <div class="caption text-center bold" id="pizza-img-caption">
+            </div>
+            <form action="#" id="pizza-game-form">
+
+              <div class="text-center">
+                <button type="button" class="btn btn-success" id="like-pizza-button"><i class="icon ion-pizza"></i></button>
+                <button type="button" class="btn btn-danger" id="dislike-pizza-button"><i class="icon ion-thumbsdown"></i></button>
+              </div>
+
+              <br>
+              <br>
+              <div class="text-center radio-button-options">
+                <input type="radio" name="topping" id="pepperoni" value="pepperoni">
+                <label for="pepperoni">Pepperoni</label>
+                <input type="radio" name="topping" id="mushroom" value="mushroom">
+                <label for="mushroom">Mushroom</label>
+                <input type="radio" name="topping" id="cheese" value="cheese">
+                <label for="cheese">Cheese</label>
+                <input type="radio" name="topping" id="pineapple" value="pineapple">
+                <label for="pineapple">Pineapple</label>
+                <br>
+                <input type="textarea" id="comment-input"><button type="button" id="add-comment">Add Comment</button><br><br>
+              </div>
+              <div class="modal-footer">
+                <div class="text-center">
+                  <progress value="0" max="30" id="progressBar"></progress><span id='progress-counter'></span>
+                </div>
+                <input type="submit" class="btn btn-primary" id="next-pizza" value="Next Pizza" disabled>
+              </form>
+              </div>
+          </div>
+        </div>
+      </div>`
       Adapter.getPizzas().then(pizzaArray => Game.getRandomPizza(pizzaArray)).then(function(randomPizzaObj) {
         Game.renderPizzaCard(randomPizzaObj);
         Game.addEventListenersToModal();
@@ -150,20 +193,29 @@ const Game = function(){
     // }
 
     static createStatusBar() {
+      let timeLeft = '';
+      clearInterval();
+      if (timeLeft === null) {
+        console.log('hey')
+      }
       console.log(document.getElementById("progressBar").value)
-      var timeLeft = 0;
-      var timeLeft = 30;
+      console.log(document.getElementById("progressBar"))
+      timeLeft = 30;
       let counter = document.getElementById("progress-counter");
       counter.innerText = `${timeLeft} seconds remaining`;
-      let downloadTimer = setInterval(function(){
+      let downloadTimer = window.setInterval(function(){
       document.getElementById("progressBar").value = 30 - --timeLeft;
+      console.log(timeLeft)
       if (timeLeft === 1) {
         counter.innerText = `  ${timeLeft} second remaining`;
       } else {
         counter.innerText = `  ${timeLeft} seconds remaining`;
       }
+      document.getElementById('next-pizza').addEventListener('click', function(){clearInterval(downloadTimer)})
       if (timeLeft <= 0) {
+        timeLeft = null;
         clearInterval(downloadTimer);
+        Game.handleNextPizza();
         //Game.init();
       }},1000);
     }
